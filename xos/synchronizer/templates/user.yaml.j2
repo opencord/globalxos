@@ -1,0 +1,29 @@
+tosca_definitions_version: tosca_simple_yaml_1_0
+
+description: Add a user
+
+imports:
+   - custom_types/xos.yaml
+
+topology_template:
+  node_templates:
+    {{ local_site }}:
+      type: tosca.nodes.Site
+
+    {{ name }}:
+      type: tosca.nodes.User
+      properties:
+          password: "{{ password }}"
+          firstname: "{{ firstname }}"
+          lastname: "{{ lastname }}"
+          phone: "{{ phone }}"
+          user_url: "{{ user_url }}"
+          public_key: "{{ public_key }}"
+          is_active: "{{ is_active }}"
+          is_admin: "{{ is_admin }}"
+          is_readonly: "{{ is_readonly }}"
+          is_appuser: "{{ is_appuser }}"
+      requirements:
+          - site:
+              node: {{ local_site }}
+              relationship: tosca.relationships.MemberOfSite

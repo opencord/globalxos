@@ -1,0 +1,29 @@
+tosca_definitions_version: tosca_simple_yaml_1_0
+
+description: Setup a slice privilege on the pod
+{% set relationship = {"admin": "tosca.relationships.AdminPrivilege", "access": "tosca.relationships.AccessPrivilege"}[role] | default("ERROR") -%}
+
+imports:
+   - custom_types/xos.yaml
+
+topology_template:
+  node_templates:
+
+    {{ local_site }}:
+      type: tosca.nodes.Site
+
+    {{ user_name }}:
+      type: tosca.nodes.User
+
+    {{ local_site }}_{{ slice_name }}:
+      type: tosca.nodes.Slice
+      properties:
+          no-create: true
+          no-delete: true
+      requirements:
+          - privilege:
+              node: {{ user_name }}
+              relationship: {{ relationship }}
+          - site:
+              node: {{ local_site }}
+              relationship: tosca.relationships.MemberOfSite

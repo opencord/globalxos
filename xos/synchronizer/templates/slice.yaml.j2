@@ -1,0 +1,48 @@
+tosca_definitions_version: tosca_simple_yaml_1_0
+
+description: Setup a generic slice on the pod
+
+imports:
+   - custom_types/xos.yaml
+
+topology_template:
+  node_templates:
+
+    management:
+      type: tosca.nodes.network.Network.XOS
+      properties:
+          no-create: true
+          no-delete: true
+          no-update: true
+
+    public:
+      type: tosca.nodes.network.Network.XOS
+      properties:
+          no-create: true
+          no-delete: true
+          no-update: true
+
+    {{ local_site }}:
+      type: tosca.nodes.Site
+
+    {{ image }}:
+      type: tosca.nodes.Image
+
+    {{ local_site }}_{{ slice_name }}:
+      description: {{ slice_description }}
+      type: tosca.nodes.Slice
+      properties:
+          network: noauto
+      requirements:
+          - site:
+              node: {{ local_site }}
+              relationship: tosca.relationships.MemberOfSite
+          - management:
+              node: management
+              relationship: tosca.relationships.ConnectsToNetwork
+          - public:
+              node: public
+              relationship: tosca.relationships.ConnectsToNetwork
+          - image:
+              node: {{ image }}
+              relationship: tosca.relationships.DefaultImage
