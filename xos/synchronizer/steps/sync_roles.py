@@ -6,7 +6,7 @@ from core.models.role import Role
 from core.models.site import SiteRole, Controller, ControllerRole
 from core.models.slice import SliceRole
 from xos.logger import observer_logger as logger
-from synchronizers.base.ansible import *
+from synchronizers.base.ansible_helper import *
 from synchronizers.base.syncstep import *
 
 class SyncRoles(SyncStep):

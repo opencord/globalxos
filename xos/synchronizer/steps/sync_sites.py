@@ -4,7 +4,7 @@ from django.db.models import F, Q
 from xos.config import Config
 from core.models.site import Site
 from xos.logger import observer_logger as logger
-from synchronizers.base.ansible import *
+from synchronizers.base.ansible_helper import *
 from synchronizers.base.syncstep import *
 
 class SyncSites(SyncStep):
