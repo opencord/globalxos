@@ -3,17 +3,7 @@
   connection: local
   # These variables are expanded by the Synchronizer framework
   # and used to create the TOSCA recipe from a template
-  vars:
-    slice_name: "{{ slice_name }}"
-    slice_description: "{{ slice_description }}"
-    image: "{{ image }}"
-    addresses: "{{ addresses }}"
-    gateway_ip: "{{ gateway_ip }}"
-    gateway_mac: "{{ gateway_mac }}"
-    max_instances: "{{ max_instances }}"
   tasks:
-  {% if delete -%}
-  {% else -%}
   - name: Lookup local name of remote site
     uri:
       url: "{{ endpoint }}/api/core/sites/"
@@ -26,7 +16,7 @@
 
   - name: Save site name in local_site variable
     set_fact:
-      local_site: "{{ '{{' }} sites.json[0]['name'] {{ '}}' }}"
+      local_site: "{{ sites.json[0]['name'] }}"
 
   - name: Get list of images
     uri:
@@ -51,7 +41,7 @@
       force_basic_auth: yes
     register: networks
 
-  - fail: msg="Network {{ '{{' }} item {{ '}}' }} is not present at {{ endpoint }}"
+  - fail: msg="Network {{ item }} is not present at {{ endpoint }}"
     when: not ((networks.json | selectattr('name', 'equalto', item)) | list)
     with_items:
       - "management"
@@ -73,7 +63,6 @@
       method: POST
       user: "{{ admin_user }}"
       password: "{{ admin_password }}"
-      body: { "recipe": "{{ '{{' }} lookup('file', '/opt/xos/synchronizers/globalxos/tosca/slices/{{ ansible_tag }}.yml') {{ '}}' }}" }
+      body: { "recipe": "{{ lookup('file', '/opt/xos/synchronizers/globalxos/tosca/slices/{{ ansible_tag }}.yml') }}" }
       force_basic_auth: yes
       body_format: json
-  {% endif %}

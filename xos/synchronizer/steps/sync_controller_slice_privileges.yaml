@@ -3,13 +3,8 @@
   connection: local
   # These variables are expanded by the Synchronizer framework
   # and used to create the TOSCA recipe from a template
-  vars:
-    slice_name: "{{ slice_name }}"
-    user_name: "{{ user_name }}"
-    role: "{{ role }}"
+
   tasks:
-  {% if delete -%}
-  {% else -%}
   - name: Lookup local name of remote site
     uri:
       url: "{{ endpoint }}/api/core/sites/"
@@ -22,11 +17,11 @@
 
   - name: Save site name in local_site variable
     set_fact:
-      local_site: "{{ '{{' }} sites.json[0]['name'] {{ '}}' }}"
+      local_site: "{{ sites.json[0]['name'] }}"
 
   - name: Save local name of slice in local_slice_name variable
     set_fact:
-      local_slice_name: "{{ '{{' }} local_site {{ '}}' }}_{{ slice_name }}"
+      local_slice_name: "{{ local_site }}_{{ slice_name }}"
 
   - name: Get list of users
     uri:
@@ -70,7 +65,6 @@
       method: POST
       user: "{{ admin_user }}"
       password: "{{ admin_password }}"
-      body: { "recipe": "{{ '{{' }} lookup('file', '/opt/xos/synchronizers/globalxos/tosca/slice_privileges/{{ ansible_tag }}.yml') {{ '}}' }}" }
+      body: { "recipe": "{{ lookup('file', '/opt/xos/synchronizers/globalxos/tosca/slice_privileges/{{ ansible_tag }}.yml') }}" }
       force_basic_auth: yes
       body_format: json
-  {% endif %}

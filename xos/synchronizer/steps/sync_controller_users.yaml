@@ -3,19 +3,6 @@
   connection: local
   # These variables are expanded by the Synchronizer framework
   # and used to create the TOSCA recipe from a template
-  vars:
-    name: "{{ name }}"
-    email: "{{ email }}"
-    password: "{{ password }}"
-    firstname: "{{ firstname }}"
-    lastname: "{{ lastname }}"
-    phone: "{{ phone }}"
-    user_url: "{{ user_url }}"
-    public_key: "{{ public_key }}"
-    is_active: "{{ is_active }}"
-    is_admin: "{{ is_admin }}"
-    is_readonly: "{{ is_readonly }}"
-    is_appuser: "{{ is_appuser }}"
   tasks:
 
   - name: Lookup local name of remote site
@@ -30,7 +17,7 @@
 
   - name: Save site name in local_site variable
     set_fact:
-      local_site: "{{ '{{' }} sites.json[0]['name'] {{ '}}' }}"
+      local_site: "{{ sites.json[0]['name'] }}"
 
   - name: Ensure TOSCA directory exists
     file:
@@ -48,6 +35,6 @@
       method: POST
       user: "{{ admin_user }}"
       password: "{{ admin_password }}"
-      body: { "recipe": "{{ '{{' }} lookup('file', '/opt/xos/synchronizers/globalxos/tosca/users/{{ ansible_tag }}.yml') {{ '}}' }}" }
+      body: { "recipe": "{{ lookup('file', '/opt/xos/synchronizers/globalxos/tosca/users/{{ ansible_tag }}.yml') }}" }
       force_basic_auth: yes
       body_format: json
